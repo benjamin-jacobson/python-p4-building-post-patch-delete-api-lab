@@ -23,6 +23,32 @@ def bakeries():
     bakeries = [bakery.to_dict() for bakery in Bakery.query.all()]
     return make_response(  bakeries,   200  )
 
+@app.route('/baked_goods', methods = ['GET','POST'])
+def baked_goods():
+    if request.method == 'GET':
+        baked_goods = []
+        for b in BakedGood.query.all():
+            b_dict = b.to_dict()
+            baked_goods.append(b_dict)
+
+        response = make_response(
+            baked_goods,
+            200
+        )
+        return response
+    elif request.method == 'POST':
+        baked_good = BakedGood(
+            name=request.form.get("name"),
+            price=request.form.get("price"),
+            bakery_id=request.form.get("bakery_id")
+        )
+
+        db.session.add(baked_good)
+        db.session.commit()
+
+        return make_response(baked_good.to_dict(), 201 )
+
+
 @app.route('/bakeries/<int:id>')
 def bakery_by_id(id):
 
